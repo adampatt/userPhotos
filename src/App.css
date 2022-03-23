@@ -1,6 +1,5 @@
 .site-contain {
   margin: 0 auto;
-  /* display: flex; */
   max-width: 1000px;
   justify-content: center;
 }
