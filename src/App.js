@@ -1,25 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import { Switch, Route } from "react-router-dom";
+import "./App.css";
+import { useEffect, useState } from "react";
+import UsersPage from "./Components/Users";
+import { USERS_STORAGE_KEY, formatResponse } from "../src/Utils";
+import UserDetailsPage from "../src/Components/UsersDetails";
+import UserAlbumPage from "./Components/UserAlbum";
+import ModalHome from "./Components/ModalHome";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const [users, setUsers] = useState([]);
+	useEffect(() => {
+		fetch("https://jsonplaceholder.typicode.com/users")
+			.then((response) => response.json())
+			.then((data) =>
+				formatResponse(data, localStorage.getItem(USERS_STORAGE_KEY))
+			)
+			.then((users) => setUsers(users));
+	}, []);
+
+	return (
+		<>
+			<div className="site-contain">
+				<div>
+					<Switch>
+						<Route exact path="/">
+							<UsersPage users={users} onSetUsers={setUsers} />
+						</Route>
+						<Route path="/users/:userId">
+							<UserDetailsPage />
+						</Route>
+						<Route path="/albums/:albumId/photos/:userId">
+							<UserAlbumPage />
+						</Route>
+						<Route path="/modal">
+							<ModalHome />
+						</Route>
+					</Switch>
+				</div>
+			</div>
+		</>
+	);
 }
 
 export default App;
